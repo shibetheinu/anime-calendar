@@ -1,0 +1,7 @@
+# No third-party packages are strictly required — the generator uses only
+# Python's standard library (json, urllib, datetime) so it runs anywhere
+# Python 3.9+ runs, including GitHub's default ubuntu-latest runners.
+#
+# Kept here for future extension (e.g. if you add `requests` for nicer HTTP
+# handling, or `icalendar` for stricter RFC5545 validation).
+requests>=2.31.0
