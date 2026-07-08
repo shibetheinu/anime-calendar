@@ -1,0 +1,43 @@
+name: Update Anime Calendar
+
+on:
+  # Run automatically every day at 09:00 UTC (5:00 AM US Eastern)
+  schedule:
+    - cron: "0 9 * * *"
+  # Also let you trigger it manually from the Actions tab
+  workflow_dispatch:
+  # Also run whenever you edit the data files or the script
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "scripts/**"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate calendar.ics
+        run: python scripts/generate_calendar.py
+
+      - name: Commit updated calendar
+        run: |
+          git config user.name "anime-calendar-bot"
+          git config user.email "actions@github.com"
+          git add docs/calendar.ics docs/status_report.json
+          git diff --quiet --cached || git commit -m "Auto-update calendar ($(date -u +%Y-%m-%d))"
+          git push
